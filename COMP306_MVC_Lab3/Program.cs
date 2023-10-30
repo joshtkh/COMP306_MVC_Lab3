@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using COMP306_MVC_Lab3.Data;
+using COMP306_MVC_Lab3.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<COMP306_MVC_Lab3Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("COMP306_MVC_Lab3Context") ?? throw new InvalidOperationException("Connection string 'COMP306_MVC_Lab3Context' not found.")));
@@ -9,6 +11,13 @@ builder.Services.AddDbContext<COMP306_MVC_Lab3Context>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
